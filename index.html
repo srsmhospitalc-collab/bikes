@@ -92,6 +92,55 @@
   </style>
   <script src="https://richinfo.co/richpartners/pops/js/richads-pu-ob.js" data-pubid="1013423" data-siteid="399054" async data-cfasync="false"></script>
   <script src="https://richinfo.co/richpartners/in-page/js/richads-ob.js?pubid=1013423&siteid=399052" ></script>
+  <style>
+#task-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 15, 30, 0.98);
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', sans-serif;
+}
+#task-box {
+    text-align: center;
+    color: white;
+}
+.timer-circle {
+    width: 180px;
+    height: 180px;
+    margin: 20px auto;
+    position: relative;
+}
+.timer-circle svg { transform: rotate(-90deg); }
+.timer-circle circle {
+    fill: none;
+    stroke-width: 8;
+}
+.timer-bg { stroke: #2a2a3e; }
+.timer-progress {
+    stroke: url(#gradient);
+    stroke-dasharray: 534;
+    stroke-dashoffset: 534;
+    transition: stroke-dashoffset 1s linear;
+    stroke-linecap: round;
+}
+.timer-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;
+    font-weight: bold;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+</style>
 </head>
 <body>
   <div class="container">
@@ -214,5 +263,73 @@
 
     </article>
   </div>
+  <!-- 22 Second Task Overlay -->
+<div id="task-overlay">
+    <div id="task-box">
+        <h2 style="font-size:26px;margin-bottom:10px;">⏱️ Task Chal Raha Hai</h2>
+        <p style="color:#aaa;margin-bottom:20px;">Kripya 22 second tak ruke rahe</p>
+        <div class="timer-circle">
+            <svg width="180" height="180">
+                <defs>
+                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <circle class="timer-bg" cx="90" cy="90" r="85"></circle>
+                <circle class="timer-progress" cx="90" cy="90" r="85" id="progress"></circle>
+            </svg>
+            <div class="timer-text" id="countdown">22</div>
+        </div>
+        <p style="font-size:13px;color:#ffb74d;margin-top:20px;">⚠️ Tab band mat karna</p>
+    </div>
+</div>
+
+<script>
+(function(){
+    // Sirf tab chalega jab pehli site se aaya ho
+    let returnUrl = localStorage.getItem('taskReturnUrl');
+    if(!returnUrl && !document.referrer.includes('github.io')) return;
+    
+    // Overlay show karo
+    document.getElementById('task-overlay').style.display = 'flex';
+    document.body.style.overflow = 'hidden'; // Scroll band
+    
+    let timeLeft = 22;
+    const totalTime = 22;
+    const progressCircle = document.getElementById('progress');
+    const countdownEl = document.getElementById('countdown');
+    const circumference = 2 * Math.PI * 85;
+    progressCircle.style.strokeDasharray = circumference;
+    
+    let timer = setInterval(function(){
+        timeLeft--;
+        countdownEl.innerText = timeLeft;
+        
+        const offset = circumference - (timeLeft / totalTime) * circumference;
+        progressCircle.style.strokeDashoffset = offset;
+        
+        if(timeLeft <= 0){
+            clearInterval(timer);
+            countdownEl.innerText = '✓';
+            
+            // Wapas bhej do
+            if(!returnUrl) returnUrl = document.referrer;
+            if(returnUrl){
+                const separator = returnUrl.includes('?') ? '&' : '?';
+                window.location.href = returnUrl + separator + 'verified=yes';
+            }
+        }
+    }, 1000);
+    
+    // Back dabane se roko
+    window.addEventListener('beforeunload', function(e){
+        if(timeLeft > 0){
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+})();
+</script>
 </body>
 </html>
