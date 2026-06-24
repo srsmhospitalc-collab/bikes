@@ -1,39 +1,81 @@
-const COLORS = ['#ff4757', '#2ed573', '#1e90ff', '#ffa502', '#be2edd', '#ff6b81'];
-let level = 1, moves = 0, selectedTube = null, tubes = [];
+const COLORS = ['#ff4757', '#2ed573', '#1e90ff', '#ffa502', '#be2edd', '#ff6b81', '#3742fa', '#ffa502'];
+let currentLevel = 1, moves = 0, selectedTube = null, tubes = [];
+let unlockedLevels = parseInt(localStorage.getItem('unlockedLevels') || '1');
 
-function initGame() {
+function init() {
     Telegram.WebApp.ready();
     Telegram.WebApp.expand();
+    showScreen('start-screen');
 
-    moves = 0;
-    updateStats();
-    generateLevel();
-    renderTubes();
+    document.getElementById('play-btn').onclick = () => showLevelSelect();
+    document.getElementById('back-btn').onclick = () => showScreen('start-screen');
+    document.getElementById('home-btn').onclick = () => showLevelSelect();
+    document.getElementById('restart-btn').onclick = () => startLevel(currentLevel);
 }
 
-function generateLevel() {
+function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+}
+
+function showLevelSelect() {
+    showScreen('level-screen');
+    renderLevelGrid();
+}
+
+function renderLevelGrid() {
+    const grid = document.getElementById('levels-grid');
+    grid.innerHTML = '';
+    document.getElementById('unlocked-count').textContent = `${unlockedLevels}/100`;
+
+    for(let i = 1; i <= 100; i++) {
+        const card = document.createElement('div');
+        card.className = 'level-card';
+        card.textContent = i;
+
+        if(i <= unlockedLevels) {
+            card.classList.add('unlocked');
+            if(i === currentLevel) card.classList.add('current');
+            card.onclick = () => startLevel(i);
+        } else {
+            card.classList.add('locked');
+            card.textContent = '🔒';
+        }
+        grid.appendChild(card);
+    }
+}
+
+function startLevel(level) {
+    currentLevel = level;
+    moves = 0;
+    selectedTube = null;
+    showScreen('game-screen');
+    generateLevel(level);
+    renderTubes();
+    updateStats();
+}
+
+function generateLevel(level) {
     tubes = [];
-    let numColors = Math.min(3 + level, 6);
+    let numColors = Math.min(3 + Math.floor(level / 10), 8);
     let ballsPerColor = 4;
     let allBalls = [];
 
     for(let i = 0; i < numColors; i++) {
         for(let j = 0; j < ballsPerColor; j++) {
-            allBalls.push(COLORS[i]);
+            allBalls.push(COLORS[i % COLORS.length]);
         }
     }
 
-    // Shuffle
     allBalls.sort(() => Math.random() - 0.5);
 
-    // Fill tubes
     for(let i = 0; i < numColors; i++) {
         tubes.push(allBalls.slice(i * ballsPerColor, (i + 1) * ballsPerColor));
     }
 
-    // Add 2 empty tubes
-    tubes.push([]);
-    tubes.push([]);
+    // Extra empty tubes based on level
+    let emptyTubes = level < 10 ? 2 : 1;
+    for(let i = 0; i < emptyTubes; i++) tubes.push([]);
 }
 
 function renderTubes() {
@@ -51,7 +93,6 @@ function renderTubes() {
             ball.style.backgroundColor = color;
             tubeEl.appendChild(ball);
         });
-
         container.appendChild(tubeEl);
     });
 }
@@ -69,7 +110,6 @@ function selectTube(idx) {
             selectedTube = null;
             return;
         }
-
         moveBall(selectedTube, idx);
         tubesEl[selectedTube].classList.remove('selected');
         selectedTube = null;
@@ -97,22 +137,22 @@ function checkWin() {
     );
 
     if(won) {
+        if(currentLevel === unlockedLevels && unlockedLevels < 100) {
+            unlockedLevels++;
+            localStorage.setItem('unlockedLevels', unlockedLevels);
+        }
+
         setTimeout(() => {
-            Telegram.WebApp.showAlert(`Level ${level} Complete! Moves: ${moves}`);
-            level++;
-            initGame();
-            showNativeAd(); // Level complete pe ad dikhao
-        }, 300);
+            Telegram.WebApp.showAlert(`🎉 Level ${currentLevel} Complete!`);
+            showNativeAd(); // Ad dikhao
+            showLevelSelect();
+        }, 500);
     }
 }
 
 function updateStats() {
-    document.getElementById('level').textContent = level;
+    document.getElementById('current-level').textContent = currentLevel;
     document.getElementById('moves').textContent = moves;
 }
 
-document.getElementById('restart-btn').onclick = initGame;
-document.getElementById('hint-btn').onclick = () => showRewardedAd('hint');
-document.getElementById('extra-tube-btn').onclick = () => showRewardedAd('tube');
-
-initGame();
+init();
