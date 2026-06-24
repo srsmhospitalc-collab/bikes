@@ -1,39 +1,33 @@
-// RichAds Initialize
 window.TelegramAdsController = new TelegramAdsController();
 window.TelegramAdsController.initialize({
-    pubId: "1013423", // Tera pubId
-    appId: "7744", // Tera appId
-    debug: false // Live me false rakhna
+    pubId: "1013423",
+    appId: "7744",
+    debug: false
 });
 
-// Native Ad Function - Har level ke baad call hoga
 function showNativeAd() {
     window.TelegramAdsController.triggerNativeNotification().then((result) => {
-        console.log('Native ad shown:', result);
-    }).catch((err) => {
-        console.log('No ad available:', err);
-    });
+        console.log('Ad shown');
+    }).catch(() => console.log('No ad'));
 }
 
-// Rewarded Ad Function - Hint ya Extra Tube ke liye
 function showRewardedAd(type) {
-    Telegram.WebApp.showConfirm('Watch ad to get ' + type + '?', (confirmed) => {
+    Telegram.WebApp.showConfirm(`Watch ad for ${type}?`, (confirmed) => {
         if(confirmed) {
-            window.TelegramAdsController.triggerNativeNotification().then((result) => {
-                // resolve = User ne ad dekha
+            window.TelegramAdsController.triggerNativeNotification().then(() => {
                 if(type === 'hint') {
-                    Telegram.WebApp.showAlert('Hint: Top wali ball ko khali tube me daalo!');
+                    Telegram.WebApp.showAlert('💡 Hint: Sabse upar wali ball ko khali tube me daalo!');
                 } else if(type === 'tube') {
-                    tubes.push([]); // Extra khali tube de do
+                    tubes.push([]);
                     renderTubes();
-                    Telegram.WebApp.showAlert('Extra tube mil gaya!');
+                    Telegram.WebApp.showAlert('➕ Extra tube added!');
                 }
-            }).catch((result) => {
-                Telegram.WebApp.showAlert('Ad load nahi hua. Try again.');
+            }).catch(() => {
+                Telegram.WebApp.showAlert('Ad failed. Try again.');
             });
         }
     });
 }
 
-// Page load pe ek native ad dikha de
-setTimeout(showNativeAd, 2000);
+document.getElementById('hint-btn').onclick = () => showRewardedAd('hint');
+document.getElementById('extra-tube-btn').onclick = () => showRewardedAd('tube');
