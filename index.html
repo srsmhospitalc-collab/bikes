@@ -1,1 +1,38 @@
-CFBFCGFGHRGH
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="6a97888e-site-verification" content="325aa9eb16d068a13193f5117785f945">
+<title>2048 Neon - SFA Games</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="bg-blob blob1"></div>
+<div class="bg-blob blob2"></div>
+
+<div class="container">
+<div class="top-bar">
+<h1>2048<span>NEON</span></h1>
+<div class="scores">
+<div class="score-box"><span>SCORE</span><div id="score">0</div></div>
+<div class="score-box best"><span>BEST</span><div id="best">0</div></div>
+</div>
+</div>
+<p class="subtitle">Join tiles, reach <b>2048</b>! Keep playing for high score.</p>
+<button id="new-game">✦ New Game</button>
+
+<div class="game-wrapper">
+<div class="grid-container" id="grid"></div>
+</div>
+
+<div class="how-to">
+<h3>How to play?</h3>
+<p>Use <b>Arrow Keys</b> or <b>Swipe</b>. Same numbers merge into bigger one!</p>
+</div>
+<footer>© SFA Games • sfagames.github.io</footer>
+</div>
+<script src="game.js"></script>
+</body>
+</html>
