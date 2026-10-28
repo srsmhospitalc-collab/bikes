@@ -3,36 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="6a97888e-site-verification" content="325aa9eb16d068a13193f5117785f945">
-<title>2048 Neon - SFA Games</title>
+<title>Gummy Galaxy - Candy Crush</title>
 <link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<div class="bg-blob blob1"></div>
-<div class="bg-blob blob2"></div>
+<div class="app">
+  <div class="header">
+    <div class="logo"><span class="logo-icon">🍬</span> GUMMY GALAXY</div>
+    <div class="stats">
+      <div class="stat"><span>LEVEL</span><b id="levelTxt">1</b></div>
+      <div class="stat"><span>SCORE</span><b id="scoreTxt">0</b></div>
+      <div class="stat"><span>MOVES</span><b id="movesTxt">25</b></div>
+    </div>
+  </div>
+  
+  <div class="progress-wrap">
+    <div class="progress-bar"><div id="progressFill"></div></div>
+    <div class="target">Target: <b id="targetTxt">800</b></div>
+  </div>
 
-<div class="container">
-<div class="top-bar">
-<h1>2048<span>NEON</span></h1>
-<div class="scores">
-<div class="score-box"><span>SCORE</span><div id="score">0</div></div>
-<div class="score-box best"><span>BEST</span><div id="best">0</div></div>
-</div>
-</div>
-<p class="subtitle">Join tiles, reach <b>2048</b>! Keep playing for high score.</p>
-<button id="new-game">✦ New Game</button>
+  <div class="board-container">
+    <div id="board" class="board"></div>
+    <div id="combo" class="combo">COMBO x2!</div>
+  </div>
 
-<div class="game-wrapper">
-<div class="grid-container" id="grid"></div>
+  <div class="bottom-panel">
+    <div class="controls">
+      <button id="hintBtn">💡 Hint</button>
+      <button id="shuffleBtn">🔀 Shuffle</button>
+    </div>
+  </div>
+
+  <!-- Level Complete Modal -->
+  <div id="levelModal" class="modal hidden">
+    <div class="modal-card">
+      <div class="stars"><span>⭐</span><span>⭐</span><span>⭐</span></div>
+      <h2 id="modalTitle">Level Complete!</h2>
+      <p id="modalScore">Score: 1200</p>
+      <button id="nextBtn" class="primary-btn">Next Level 🚀</button>
+    </div>
+  </div>
+
+  <!-- Level Locked Modal - Now Free Unlock -->
+  <div id="lockedModal" class="modal hidden">
+    <div class="modal-card locked-card">
+      <div class="lock-icon">🔒</div>
+      <h2>Level <span id="lockedLevel">5</span> Locked!</h2>
+      <p>Continue your journey to unlock this Galaxy!</p>
+      <div class="reward-preview">🎁 +50 Moves + Bomb Booster</div>
+      <button id="unlockBtn" class="primary-btn reward-btn">🔓 Unlock Now</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
 </div>
 
-<div class="how-to">
-<h3>How to play?</h3>
-<p>Use <b>Arrow Keys</b> or <b>Swipe</b>. Same numbers merge into bigger one!</p>
-</div>
-<footer>© SFA Games • sfagames.github.io</footer>
-</div>
 <script src="game.js"></script>
 </body>
 </html>
